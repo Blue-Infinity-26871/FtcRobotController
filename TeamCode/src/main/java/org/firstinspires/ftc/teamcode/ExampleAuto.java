@@ -11,13 +11,16 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "Example Auto", group = "Examples")
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+@Autonomous(name = "3 Ball Auto", group = "Examples")
 public class ExampleAuto extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
+<<<<<<< Updated upstream
     private int shootState;   // 0 = idle, 1 = spin-up, 2 = transfer, 3 = done
 
     // Shooter / transfer hardware
@@ -28,6 +31,11 @@ public class ExampleAuto extends OpMode {
     // --- 3-Ball Auto Poses ---
 
     public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(180));
+=======
+
+    public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(0));
+
+>>>>>>> Stashed changes
     public final Pose scorePose = new Pose(98.58760107816713, 114.30727762803235, Math.toRadians(37));
 
     // Ball 1 (rightmost of row 1)
@@ -63,7 +71,7 @@ public class ExampleAuto extends OpMode {
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickup1Pose))
+                .addPath(new BezierLine(scorePose, scorePose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
                 .build();
 
@@ -263,10 +271,14 @@ public class ExampleAuto extends OpMode {
     }
 
     @Override
+<<<<<<< Updated upstream
     public void stop() {
         // Safety: make sure everything is off
         if (M6 != null) M6.setPower(0.0);
         if (M7 != null) M7.setPower(0.0);
         if (S1 != null) S1.setPosition(0.0);
     }
+=======
+    public void stop() {}
+>>>>>>> Stashed changes
 }
