@@ -17,7 +17,10 @@ public class Constants {
             .forwardZeroPowerAcceleration(59.045)
             .lateralZeroPowerAcceleration(71.390);
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.99,
+            100,
+            0.8,
+            1);
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("M3")
@@ -44,8 +47,8 @@ public class Constants {
                 .pinpointLocalizer(localizerConstants)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
-                .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0.01, 0.03))
-                .headingPIDFCoefficients(new PIDFCoefficients(1, 0, 0.01, 0.03))
+                .translationalPIDFCoefficients(newPIDFCoefficients(0.1, 0, 0.01, 0.03))
+                .headingPIDFCoefficients(newPIDFCoefficients(1, 0, 0.01, 0.03))
 
 
                 .build();

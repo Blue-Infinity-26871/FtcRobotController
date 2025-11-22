@@ -42,7 +42,7 @@ public class PidTuningExample extends LinearOpMode {
         while (opModeIsActive()) {
             PIDFCoefficients currentPIDFCoefficients = shooter.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
             if (currentPIDFCoefficients.p != X25Config.SHOOTER_PID.p ||
-                    currentPIDFCoefficients.i != X25Config.SHOOTER_PID.i ||
+                    currbrentPIDFCoefficients.i != X25Config.SHOOTER_PID.i ||
                     currentPIDFCoefficients.d != X25Config.SHOOTER_PID.d ||
                     currentPIDFCoefficients.f != X25Config.SHOOTER_PID.f){
                 shooter.setVelocityPIDFCoefficients(X25Config.SHOOTER_PID.p, X25Config.SHOOTER_PID.i, X25Config.SHOOTER_PID.d, X25Config.SHOOTER_PID.f);
