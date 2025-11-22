@@ -27,10 +27,9 @@ public class ExampleAuto extends OpMode {
     private DcMotor M7;       // shooter
     private Servo S1;       // feeder servo
 
-    // --- 3-Ball Auto Poses ---
 
     public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(270));
-    public final Pose scorePose = new Pose(103.44, 84.22, Math.toRadians(37));
+    public final Pose scorePose = new Pose(103.44, 112.20346820809247, Math.toRadians(397));
 
     // Ball 1 (rightmost of row 1)
     public final Pose pickup1Pose = new Pose(
@@ -98,180 +97,134 @@ public class ExampleAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                // Drive from start to first scoring position
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
-
             case 1:
-                // FIRST SCORE AT scorePose:
-                //  - when we arrive, spin up M7
-                //  - after 5 sec, start M6 (transfer)
-                //  - after feed time, move to grabPickup1
-                if (!follower.isBusy()) {
-                    handleFirstScore();
+
+            /* You could check for
+            - Follower State: "if(!follower.isBusy()) {}"
+            - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
+            - Robot Position: "if(follower.getPose().getX() > 36) {}"
+            */
+
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(!follower.isBusy()) {
+                    /* Score Preload */
+
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                 //   follower.followPath(grabPickup1,true);
+                    setPathState(2);
                 }
                 break;
-
             case 2:
-                if (!follower.isBusy()) {
-                    // After first pickup, go back to score
-                    follower.followPath(scorePickup1, true);
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
+                if(!follower.isBusy()) {
+                    /* Grab Sample */
+
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                  //  follower.followPath(scorePickup1,true);
                     setPathState(3);
                 }
                 break;
-
             case 3:
-                if (!follower.isBusy()) {
-                    // Score second ball
-                    follower.followPath(grabPickup2, true);
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(!follower.isBusy()) {
+                    /* Score Sample */
+
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                 //   follower.followPath(grabPickup2,true);
                     setPathState(4);
                 }
                 break;
-
             case 4:
-                if (!follower.isBusy()) {
-                    // Grab third
-                    follower.followPath(scorePickup2, true);
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
+                if(!follower.isBusy()) {
+                    /* Grab Sample */
+
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                  //  follower.followPath(scorePickup2,true);
                     setPathState(5);
                 }
                 break;
-
             case 5:
-                if (!follower.isBusy()) {
-                    // Score third
-                    follower.followPath(grabPickup3, true);
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(!follower.isBusy()) {
+                    /* Score Sample */
+
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                   // follower.followPath(grabPickup3,true);
                     setPathState(6);
                 }
                 break;
-
             case 6:
-                if (!follower.isBusy()) {
-                    // Grab fourth
-                    follower.followPath(scorePickup3, true);
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
+                if(!follower.isBusy()) {
+                    /* Grab Sample */
+
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                   // follower.followPath(scorePickup3, true);
                     setPathState(7);
                 }
                 break;
-
             case 7:
-                if (!follower.isBusy()) {
-                    // Done
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(!follower.isBusy()) {
+                    /* Set the state to a Case we won't use or define, so it just stops running an new paths */
                     setPathState(-1);
                 }
                 break;
         }
     }
 
-    /**
-     * Handles the first scoring sequence:
-     * - shootState 0: start spinning shooter (M7), start timer
-     * - shootState 1: after 5 sec, start transfer (M6) + open S1
-     * - shootState 2: after 1.5 sec feeding, stop everything and go to grabPickup1
-     */
-    private void handleFirstScore() {
-        switch (shootState) {
-            case 0:
-                // Spin up shooter
-                M7.setPower(1.0);       // same as TeleOp "full speed"
-                S1.setPosition(0.0);    // keep gate closed while spinning up
-                actionTimer.resetTimer();
-                shootState = 1;
-                break;
-
-            case 1:
-                // Wait 5 seconds before feeding
-                if (actionTimer.getElapsedTimeSeconds() >= 5.0) {
-                    // Start transfer + open gate
-                    M6.setPower(1.0);
-                    S1.setPosition(0.5); // same "open" as TeleOp when m7Power > 0.4
-                    actionTimer.resetTimer();
-                    shootState = 2;
-                }
-                break;
-
-            case 2:
-                // Let it feed for a bit, then move on
-                if (actionTimer.getElapsedTimeSeconds() >= 3) { // tweak feed time as needed
-                    // Stop shooter & transfer
-                    M6.setPower(0.0);
-                    M7.setPower(0.0);
-                    S1.setPosition(0.0);
-
-                    // Now go grab the first pickup, holding end point
-                    follower.followPath(grabPickup1, true);
-                    setPathState(2);
-                    shootState = 3;  // finished this scoring sequence
-                }
-                break;
-
-            case 3:
-                // Do nothing – we've already started the next path
-                break;
-        }
-    }
-
-    /**
-     * Change path state and reset its timer
-     **/
+    /** These change the states of the paths and actions. It will also reset the timers of the individual switches **/
     public void setPathState(int pState) {
         pathState = pState;
         pathTimer.resetTimer();
     }
+/** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
+@Override
+public void loop() {
 
-    @Override
-    public void loop() {
-        follower.update();
-        autonomousPathUpdate();
+    // These loop the movements of the robot, these must be called continuously in order to work
+    follower.update();
+    autonomousPathUpdate();
 
-        telemetry.addData("path state", pathState);
-        telemetry.addData("shoot state", shootState);
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.update();
-    }
+    // Feedback to Driver Hub for debugging
+    telemetry.addData("path state", pathState);
+    telemetry.addData("x", follower.getPose().getX());
+    telemetry.addData("y", follower.getPose().getY());
+    telemetry.addData("heading", follower.getPose().getHeading());
+    telemetry.update();
+}
 
-    @Override
-    public void init() {
-        pathTimer = new Timer();
-        actionTimer = new Timer();
-        opmodeTimer = new Timer();
-        opmodeTimer.resetTimer();
+/** This method is called once at the init of the OpMode. **/
+@Override
+public void init() {
+    pathTimer = new Timer();
+    opmodeTimer = new Timer();
+    opmodeTimer.resetTimer();
 
-        // Map shooter/transfer hardware (same names as TeleOp)
-        M6 = hardwareMap.get(DcMotor.class, "M6");
-        M7 = hardwareMap.get(DcMotor.class, "M7");
-        S1 = hardwareMap.get(Servo.class, "S1");
 
-        // Match TeleOp behavior
-        M7.setDirection(DcMotor.Direction.REVERSE);  // same as TeleOp
-        M6.setPower(0.0);
-        M7.setPower(0.0);
-        S1.setPosition(0.0);
+    follower = Constants.createFollower(hardwareMap);
+    buildPaths();
+    follower.setStartingPose(startPose);
 
-        shootState = 0;
+}
 
-        follower = Constants.createFollower(hardwareMap);
-        buildPaths();
-        follower.setStartingPose(startPose);
-    }
+/** This method is called continuously after Init while waiting for "play". **/
+@Override
+public void init_loop() {}
 
-    @Override
-    public void init_loop() {
-    }
+/** This method is called once at the start of the OpMode.
+ * It runs all the setup actions, including building paths and starting the path system **/
+@Override
+public void start() {
+    opmodeTimer.resetTimer();
+    setPathState(0);
+}
 
-    @Override
-    public void start() {
-        opmodeTimer.resetTimer();
-        shootState = 0;
-        setPathState(0);
-    }
-
-    @Override
-    public void stop() {
-        // Safety: make sure everything is off
-        if (M6 != null) M6.setPower(0.0);
-        if (M7 != null) M7.setPower(0.0);
-        if (S1 != null) S1.setPosition(0.0);
-    }
+/** We do not use this because everything should automatically disable **/
+@Override
+public void stop() {}
 }
