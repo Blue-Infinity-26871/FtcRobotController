@@ -16,11 +16,35 @@ public class ExampleAuto extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
-    private final Pose startPose = new Pose(28.5, 128, Math.toRadians(180)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(60, 85, Math.toRadians(135)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
-    private final Pose pickup1Pose = new Pose(37, 121, Math.toRadians(0)); // Highest (First Set) of Artifacts from the Spike Mark.
-    private final Pose pickup2Pose = new Pose(43, 130, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+    // --- 3-Ball Auto Poses ---
+
+    public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(180));
+
+    public final Pose scorePose = new Pose(98.58760107816713, 114.30727762803235, Math.toRadians(37));
+
+    // Ball 1 (rightmost of row 1)
+    public final Pose pickup1Pose = new Pose(
+            103.43935309973047, 84.22641509433961, Math.toRadians(0)
+    );
+
+    // Ball 2 (rightmost of row 2)
+    public final Pose pickup1PoseEnd = new Pose(
+            124.78706199460916, 84.03234501347708, Math.toRadians(0)
+    );
+
+    // Ball 3 (rightmost of row 3)  ← only if needed
+    public final Pose pickup2Pose = new Pose(
+            103.24528301886792, 59.579514824797855, Math.toRadians(0)
+    );
+    public final Pose pickup2PoseEnd = new Pose(
+            125.36927223719675, 59.38544474393531, Math.toRadians(0)
+    );
+    public final Pose pickup3Pose = new Pose(
+            107.1266846361186, 35.1266846361186, Math.toRadians(0)
+    );
+    public final Pose pickup3PoseEnd = new Pose(
+            125.36927223719675, 35.32075471698113, Math.toRadians(0)
+    );
     private Path scorePreload;
     private PathChain grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
 
