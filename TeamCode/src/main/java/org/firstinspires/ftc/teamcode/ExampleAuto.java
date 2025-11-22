@@ -22,6 +22,7 @@ public class ExampleAuto extends OpMode {
     private int pathState;
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     private int shootState;   // 0 = idle, 1 = spin-up, 2 = transfer, 3 = done
 
     // Shooter / transfer hardware
@@ -34,6 +35,10 @@ public class ExampleAuto extends OpMode {
     public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(180));
 =======
 =======
+=======
+
+    public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(0));
+>>>>>>> Stashed changes
 
     public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(0));
 >>>>>>> Stashed changes
@@ -278,12 +283,16 @@ public class ExampleAuto extends OpMode {
     @Override
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     public void stop() {
         // Safety: make sure everything is off
         if (M6 != null) M6.setPower(0.0);
         if (M7 != null) M7.setPower(0.0);
         if (S1 != null) S1.setPosition(0.0);
     }
+=======
+    public void stop() {}
+>>>>>>> Stashed changes
 =======
     public void stop() {}
 >>>>>>> Stashed changes
