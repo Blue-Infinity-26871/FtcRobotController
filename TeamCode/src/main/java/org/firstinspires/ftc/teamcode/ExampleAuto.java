@@ -20,33 +20,17 @@ public class ExampleAuto extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
 
     private int pathState;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     private int shootState;   // 0 = idle, 1 = spin-up, 2 = transfer, 3 = done
 
     // Shooter / transfer hardware
     private DcMotor M6;       // transfer
     private DcMotor M7;       // shooter
-    private Servo   S1;       // feeder servo
+    private Servo S1;       // feeder servo
 
     // --- 3-Ball Auto Poses ---
 
-    public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(180));
-=======
-=======
-=======
-
-    public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(0));
->>>>>>> Stashed changes
-
-    public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(0));
->>>>>>> Stashed changes
-
-    public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(0));
-
->>>>>>> Stashed changes
-    public final Pose scorePose = new Pose(98.58760107816713, 114.30727762803235, Math.toRadians(37));
+    public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(270));
+    public final Pose scorePose = new Pose(103.44, 84.22, Math.toRadians(37));
 
     // Ball 1 (rightmost of row 1)
     public final Pose pickup1Pose = new Pose(
@@ -130,7 +114,7 @@ public class ExampleAuto extends OpMode {
                 break;
 
             case 2:
-                if(!follower.isBusy()) {
+                if (!follower.isBusy()) {
                     // After first pickup, go back to score
                     follower.followPath(scorePickup1, true);
                     setPathState(3);
@@ -138,7 +122,7 @@ public class ExampleAuto extends OpMode {
                 break;
 
             case 3:
-                if(!follower.isBusy()) {
+                if (!follower.isBusy()) {
                     // Score second ball
                     follower.followPath(grabPickup2, true);
                     setPathState(4);
@@ -146,7 +130,7 @@ public class ExampleAuto extends OpMode {
                 break;
 
             case 4:
-                if(!follower.isBusy()) {
+                if (!follower.isBusy()) {
                     // Grab third
                     follower.followPath(scorePickup2, true);
                     setPathState(5);
@@ -154,7 +138,7 @@ public class ExampleAuto extends OpMode {
                 break;
 
             case 5:
-                if(!follower.isBusy()) {
+                if (!follower.isBusy()) {
                     // Score third
                     follower.followPath(grabPickup3, true);
                     setPathState(6);
@@ -162,7 +146,7 @@ public class ExampleAuto extends OpMode {
                 break;
 
             case 6:
-                if(!follower.isBusy()) {
+                if (!follower.isBusy()) {
                     // Grab fourth
                     follower.followPath(scorePickup3, true);
                     setPathState(7);
@@ -170,7 +154,7 @@ public class ExampleAuto extends OpMode {
                 break;
 
             case 7:
-                if(!follower.isBusy()) {
+                if (!follower.isBusy()) {
                     // Done
                     setPathState(-1);
                 }
@@ -180,9 +164,9 @@ public class ExampleAuto extends OpMode {
 
     /**
      * Handles the first scoring sequence:
-     *  - shootState 0: start spinning shooter (M7), start timer
-     *  - shootState 1: after 5 sec, start transfer (M6) + open S1
-     *  - shootState 2: after 1.5 sec feeding, stop everything and go to grabPickup1
+     * - shootState 0: start spinning shooter (M7), start timer
+     * - shootState 1: after 5 sec, start transfer (M6) + open S1
+     * - shootState 2: after 1.5 sec feeding, stop everything and go to grabPickup1
      */
     private void handleFirstScore() {
         switch (shootState) {
@@ -207,7 +191,7 @@ public class ExampleAuto extends OpMode {
 
             case 2:
                 // Let it feed for a bit, then move on
-                if (actionTimer.getElapsedTimeSeconds() >= 1.5) { // tweak feed time as needed
+                if (actionTimer.getElapsedTimeSeconds() >= 3) { // tweak feed time as needed
                     // Stop shooter & transfer
                     M6.setPower(0.0);
                     M7.setPower(0.0);
@@ -226,7 +210,9 @@ public class ExampleAuto extends OpMode {
         }
     }
 
-    /** Change path state and reset its timer **/
+    /**
+     * Change path state and reset its timer
+     **/
     public void setPathState(int pState) {
         pathState = pState;
         pathTimer.resetTimer();
@@ -271,7 +257,8 @@ public class ExampleAuto extends OpMode {
     }
 
     @Override
-    public void init_loop() {}
+    public void init_loop() {
+    }
 
     @Override
     public void start() {
@@ -281,22 +268,10 @@ public class ExampleAuto extends OpMode {
     }
 
     @Override
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     public void stop() {
         // Safety: make sure everything is off
         if (M6 != null) M6.setPower(0.0);
         if (M7 != null) M7.setPower(0.0);
         if (S1 != null) S1.setPosition(0.0);
     }
-=======
-    public void stop() {}
->>>>>>> Stashed changes
-=======
-    public void stop() {}
->>>>>>> Stashed changes
-=======
-    public void stop() {}
->>>>>>> Stashed changes
 }
