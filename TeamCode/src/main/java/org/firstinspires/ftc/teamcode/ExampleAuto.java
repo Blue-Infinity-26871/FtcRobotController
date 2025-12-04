@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -23,19 +24,23 @@ public class ExampleAuto extends OpMode {
     private int shootState;   // 0 = idle, 1 = spin-up, 2 = transfer, 3 = done
 
     // Shooter / transfer hardware
+    private DcMotor M5;
     private DcMotor M6;       // transfer
     private DcMotor M7;       // shooter
+    private DcMotor M8;
     private Servo S1;       // feeder servo
 
 
-    public final Pose startPose = new Pose(79.7628, 137.0135, Math.toRadians(270));
-    public final Pose scorePose = new Pose(103.44, 112.20346820809247, Math.toRadians(397));
+    public final Pose startPose = new Pose(0, 0, Math.toRadians(0));
+    public final Pose scorePose = new Pose(7.5, 0, Math.toRadians(0));
 
     // Ball 1 (rightmost of row 1)
-    public final Pose pickup1Pose = new Pose(
-            103.43935309973047, 84.22641509433961, Math.toRadians(0)
+    public final Pose leavePose = new Pose(
+            24, 0, Math.toRadians(0)
     );
-
+    public final Pose pickup1Pose = new Pose(
+            0, 24, Math.toRadians(0)
+    );
     // Ball 2 (rightmost of row 2)
     public final Pose pickup1PoseEnd = new Pose(
             124.78706199460916, 84.03234501347708, Math.toRadians(0)
@@ -56,13 +61,16 @@ public class ExampleAuto extends OpMode {
     );
 
     private Path scorePreload;
-    private PathChain grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
+    private PathChain grabPickup1, scorePickup1,leave1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
 
     public void buildPaths() {
         // Preload to first score
         scorePreload = new Path(new BezierLine(startPose, scorePose));
         scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
-
+        leave1 = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, leavePose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
+                .build();
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(scorePose, scorePose))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
@@ -98,6 +106,7 @@ public class ExampleAuto extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
+                scorePreload.setBrakingStrength(0.2);
                 setPathState(1);
                 break;
             case 1:
@@ -111,10 +120,45 @@ public class ExampleAuto extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if(!follower.isBusy()) {
                     /* Score Preload */
+                    if(pathTimer.getElapsedTimeSeconds() > 5) {
+
+                        M7.setPower(0.92);
+                        S1.setPosition(0.5);
+                    }
+                    if(pathTimer.getElapsedTimeSeconds() > 8) {
+                        scorePreload.setBrakingStrength(0.2);
+                        M8.setPower(-1.0);
+                    }
+                    if(pathTimer.getElapsedTimeSeconds() > 11) {
+                        M8.setPower(0.0);
+                    }
+                    if(pathTimer.getElapsedTimeSeconds() > 13) {
+                        scorePreload.setBrakingStrength(0.2);
+                        M8.setPower(-1.0);
+                        M5.setPower(1.0);
+                    }
+                    if(pathTimer.getElapsedTimeSeconds() > 16) {
+                        M7.setPower(0.86);
+                        M5.setPower(0.0);
+                    }
+                    if(pathTimer.getElapsedTimeSeconds() > 19) {
+                        scorePreload.setBrakingStrength(0.2);
+                        M8.setPower(-1.0);
+                    }
+                    if(pathTimer.getElapsedTimeSeconds() > 23) {
+                        scorePreload.setBrakingStrength(0.2);
+                        M8.setPower(0.0);
+                        M7.setPower(0.0);
+                        S1.setPosition(0.0);
+                    }
 
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
                  //   follower.followPath(grabPickup1,true);
-                    setPathState(2);
+                    if(pathTimer.getElapsedTimeSeconds() > 25) {
+                        follower.followPath(leave1, true);
+                        setPathState(2);
+                    }
+
                 }
                 break;
             case 2:
@@ -209,7 +253,13 @@ public void init() {
     follower = Constants.createFollower(hardwareMap);
     buildPaths();
     follower.setStartingPose(startPose);
-
+    M5 = hardwareMap.get(DcMotor.class, "M5");
+    M6 = hardwareMap.get(DcMotor.class, "M6");
+    M7 = hardwareMap.get(DcMotor.class, "M7");
+    M8 = hardwareMap.get(DcMotor.class, "M8");
+    S1 = hardwareMap.get(Servo.class, "S1");
+    M5.setDirection(DcMotor.Direction.REVERSE);
+    M7.setDirection(DcMotor.Direction.REVERSE);
 }
 
 /** This method is called continuously after Init while waiting for "play". **/
